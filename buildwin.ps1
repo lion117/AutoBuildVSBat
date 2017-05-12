@@ -57,6 +57,7 @@ Param
   [string] $mysql_base,
 
   [switch] $help
+  Write-Host "-------------++++++++------------------"
 )
 
 
@@ -212,14 +213,16 @@ function Build-MSBuild([string] $vsProject)
         foreach ($cfg in $configArr)
         {
           $projectConfig = "$cfg"
-          $projectConfig += "_$mode"
+		  Write-Host "-------------$projectConfig------------------"
+          #$projectConfig += "_$mode"
           Invoke-Expression "msbuild $vsProject /t:$action /p:Configuration=$projectConfig /p:Platform=$platform /p:useenv=true"
         }
       }
       else #config
       {
         $projectConfig = "$config"
-        $projectConfig += "_$mode"
+		Write-Host "-------------$projectConfig------------------"
+        #$projectConfig += "_$mode"
         Invoke-Expression "msbuild $vsProject /t:$action /p:Configuration=$projectConfig /p:Platform=$platform /p:useenv=true"
       }
     }
@@ -232,14 +235,16 @@ function Build-MSBuild([string] $vsProject)
       foreach ($cfg in $configArr)
       {
         $projectConfig = "$cfg"
-        $projectConfig += "_$linkmode"
+		Write-Host "-------------$projectConfig------------------"
+        #$projectConfig += "_$linkmode"
         Invoke-Expression "msbuild $vsProject /t:$action /p:Configuration=$projectConfig /p:Platform=$platform /p:useenv=true"
       }
     }
     else #config
     {
       $projectConfig = "$config"
-      $projectConfig += "_$linkmode"
+	  Write-Host "-------------$projectConfig------------------"
+      #$projectConfig += "_$linkmode"
       Invoke-Expression "msbuild $vsProject /t:$action /p:Configuration=$projectConfig /p:Platform=$platform /p:useenv=true"
     }
   }
@@ -260,14 +265,16 @@ function Build-Devenv([string] $vsProject)
         foreach ($cfg in $configArr)
         {
           $projectConfig = "$cfg"
-          $projectConfig += "_$mode"
+		  Write-Host "-------------$projectConfig------------------"
+          #$projectConfig += "_$mode"
           Invoke-Expression "devenv /useenv /$action $projectConfig $vsProject"
         }
       }
       else #config
       {
         $projectConfig = "$config"
-        $projectConfig += "_$mode"
+		Write-Host "-------------$projectConfig------------------"
+        #$projectConfig += "_$mode"
         Invoke-Expression "devenv /useenv /$action $projectConfig $vsProject"
       }
     }
@@ -280,19 +287,20 @@ function Build-Devenv([string] $vsProject)
       foreach ($cfg in $configArr)
       {
         $projectConfig = "$cfg"
-        $projectConfig += "_$linkmode"
+		Write-Host "-------------$projectConfig------------------"
+        #$projectConfig += "_$linkmode"
         Invoke-Expression "devenv /useenv /$action $projectConfig $vsProject"
       }
     }
     else #config
     {
       $projectConfig = "$config"
-      $projectConfig += "_$linkmode"
+      #$projectConfig += "_$linkmode"
       Invoke-Expression "devenv /useenv /$action $projectConfig $vsProject"
     }
   }
   $projectConfig = "$config"
-  $projectConfig += "_$linkmode"
+  #$projectConfig += "_$linkmode"
   Invoke-Expression "devenv /useenv /$action $projectConfig $vsProject"
 }
 
@@ -335,11 +343,11 @@ function Build
 
     if ($omitArray -NotContains $component)
     {
-      $vsProject = "$poco_base\$componentDir\$componentName$($platformName)$($suffix).$($extension)"
+      $vsProject = "$poco_base\$componentDir\$componentName$.$($extension)"
       
       if (!(Test-Path -Path $vsProject)) # when VS project name is not same as directory name
       {
-        $vsProject = "$poco_base\$componentDir$($platformName)$($suffix).$($extension)"
+        $vsProject = "$poco_base\$componentDir$.$($extension)"
         if (!(Test-Path -Path $vsProject)) # not found
         {
           Write-Host "+------------------------------------------------------------------"

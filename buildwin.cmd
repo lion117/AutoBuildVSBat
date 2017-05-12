@@ -300,23 +300,23 @@ for /f %%G in ('findstr /R "." components') do (
   if exist %%G (
     cd %%G
     for /f "tokens=1,2,3,4 delims=/" %%Q in ("%%G") do (
-      set PROJECT_FILE=%%Q%PLATFORM_SUFFIX%_%VS_VERSION%.%VCPROJ_EXT%
+      set PROJECT_FILE=%%Q.%VCPROJ_EXT%
       set TEST_PROJECT_FILE=testsuite/TestSuite%PLATFORM_SUFFIX%_%VS_VERSION%.%VCPROJ_EXT%
       if exist !PROJECT_FILE! (
         call :build %%G 
         if ERRORLEVEL 1 goto buildfailed
       )
-      set PROJECT_FILE=%%R%PLATFORM_SUFFIX%_%VS_VERSION%.%VCPROJ_EXT%
+      set PROJECT_FILE=%%R.%VCPROJ_EXT%
       if exist !PROJECT_FILE! (
         call :build %%G 
         if ERRORLEVEL 1 goto buildfailed
       )
-      set PROJECT_FILE=%%S%PLATFORM_SUFFIX%_%VS_VERSION%.%VCPROJ_EXT%
+      set PROJECT_FILE=%%S.%VCPROJ_EXT%
       if exist !PROJECT_FILE! (
         call :build %%G 
         if ERRORLEVEL 1 goto buildfailed
       )
-      set PROJECT_FILE=%%T%PLATFORM_SUFFIX%_%VS_VERSION%.%VCPROJ_EXT%
+      set PROJECT_FILE=%%T.%VCPROJ_EXT%
       if exist !PROJECT_FILE! (
         call :build %%G 
         if ERRORLEVEL 1 goto buildfailed
@@ -326,7 +326,7 @@ for /f %%G in ('findstr /R "." components') do (
   cd "%POCO_BASE%"
 )
 
-goto samples
+REM goto samples
 
 rem ////////////////////
 rem / build subroutine /
@@ -342,24 +342,24 @@ echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 echo.
 
 if %DEBUG_SHARED%==1 (
-  !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_shared %PLATFORMSW% !PROJECT_FILE! 
+  !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug %PLATFORMSW% !PROJECT_FILE! 
   if ERRORLEVEL 1 exit /b 1
   echo. && echo. && echo.
   if %TESTS%==tests (
     if exist !TEST_PROJECT_FILE! (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_shared %PLATFORMSW% !TEST_PROJECT_FILE!
+      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug %PLATFORMSW% !TEST_PROJECT_FILE!
       if ERRORLEVEL 1 exit /b 1
       echo. && echo. && echo.
     )
   )
 )
 if %RELEASE_SHARED%==1 (
-  !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_shared %PLATFORMSW% !PROJECT_FILE! 
+  !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release %PLATFORMSW% !PROJECT_FILE! 
   if ERRORLEVEL 1 exit /b 1
   echo. && echo. && echo.
   if %TESTS%==tests (
     if exist !TEST_PROJECT_FILE! (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_shared %PLATFORMSW% !TEST_PROJECT_FILE!
+      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release %PLATFORMSW% !TEST_PROJECT_FILE!
       if ERRORLEVEL 1 exit /b 1
       echo. && echo. && echo.
     )
@@ -433,61 +433,61 @@ rem ////////////////////
 if %SAMPLES%==nosamples goto :EOF
 
 rem root level component samples
-for /f %%G in ('findstr /R "." components') do (
-  if exist %%G\samples\samples%PLATFORM_SUFFIX%_%VS_VERSION%.sln (
-    cd %%G\samples
-    echo.
-    echo.
-    echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    echo ++++ Building [%%G/samples]
-    echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    echo.
-    set SOLUTION_FILE=samples%PLATFORM_SUFFIX%_%VS_VERSION%.sln
+REM for /f %%G in ('findstr /R "." components') do (
+  REM if exist %%G\samples\samples%PLATFORM_SUFFIX%_%VS_VERSION%.sln (
+    REM cd %%G\samples
+    REM echo.
+    REM echo.
+    REM echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    REM echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    REM echo ++++ Building [%%G/samples]
+    REM echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    REM echo ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    REM echo.
+    REM set SOLUTION_FILE=samples%PLATFORM_SUFFIX%_%VS_VERSION%.sln
 
-    if %DEBUG_SHARED%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_shared %PLATFORMSW% !SOLUTION_FILE! 
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
-    if %RELEASE_SHARED%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_shared %PLATFORMSW% !SOLUTION_FILE! 
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
-    if %DEBUG_STATIC_MT%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_static_mt %PLATFORMSW% !SOLUTION_FILE! 
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
-    if %RELEASE_STATIC_MT%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_static_mt %PLATFORMSW% !SOLUTION_FILE! 
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
-    if %DEBUG_STATIC_MD%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_static_md %PLATFORMSW% !SOLUTION_FILE!
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
-    if %RELEASE_STATIC_MD%==1 (
-      !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_static_md %PLATFORMSW% !SOLUTION_FILE!
-      if ERRORLEVEL 1 goto buildfailed
-      echo. && echo. && echo.
-    )
+    REM if %DEBUG_SHARED%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_shared %PLATFORMSW% !SOLUTION_FILE! 
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
+    REM if %RELEASE_SHARED%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_shared %PLATFORMSW% !SOLUTION_FILE! 
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
+    REM if %DEBUG_STATIC_MT%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_static_mt %PLATFORMSW% !SOLUTION_FILE! 
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
+    REM if %RELEASE_STATIC_MT%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_static_mt %PLATFORMSW% !SOLUTION_FILE! 
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
+    REM if %DEBUG_STATIC_MD%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%debug_static_md %PLATFORMSW% !SOLUTION_FILE!
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
+    REM if %RELEASE_STATIC_MD%==1 (
+      REM !BUILD_TOOL! %USEENV% %EXTRASW% %ACTIONSW%%ACTION% %CONFIGSW%release_static_md %PLATFORMSW% !SOLUTION_FILE!
+      REM if ERRORLEVEL 1 goto buildfailed
+      REM echo. && echo. && echo.
+    REM )
     
-    cd "%POCO_BASE%"
+    REM cd "%POCO_BASE%"
   
-    echo.
-    echo ------------------------------------------------------------------------
-    echo ------------------------------------------------------------------------
-    echo ---- Done building [%%G/samples]
-    echo ------------------------------------------------------------------------
-    echo ------------------------------------------------------------------------
-    echo.
-  )
-)
+    REM echo.
+    REM echo ------------------------------------------------------------------------
+    REM echo ------------------------------------------------------------------------
+    REM echo ---- Done building [%%G/samples]
+    REM echo ------------------------------------------------------------------------
+    REM echo ------------------------------------------------------------------------
+    REM echo.
+  REM )
+REM )
 
 echo.
 echo ------------------------------------------------------------------------

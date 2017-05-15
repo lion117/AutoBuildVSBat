@@ -57,7 +57,6 @@ Param
   [string] $mysql_base,
 
   [switch] $help
-  Write-Host "-------------++++++++------------------"
 )
 
 
@@ -343,7 +342,7 @@ function Build
 
     if ($omitArray -NotContains $component)
     {
-      $vsProject = "$poco_base\$componentDir\$componentName$.$($extension)"
+      $vsProject = "$poco_base\$componentDir\$componentName.$($extension)"
       
       if (!(Test-Path -Path $vsProject)) # when VS project name is not same as directory name
       {

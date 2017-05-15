@@ -1,5 +1,5 @@
 @echo off
-buildwin.ps1 140 build shared both Win32 devenv
+buildwin.ps1 "./" 140 build shared both Win32 devenv
 
 :vs2008 90
 :vs2013 120
